@@ -1,13 +1,4 @@
 
-/**
- * @returns {Object}
- */
-const fetchLogin = async () => {
-
-    const res = await fetch('https://mmedical-api-d691032dcc94.herokuapp.com/api/v1/auth/login');
-    console.log(res)
-}
-
 export const TokenStore = {
     token: ''
 };
