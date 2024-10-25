@@ -45,7 +45,7 @@ export const Mmedical = (email, password, error) => {
                 window.location.href = './src/Mmedical/home.html';
               })
             .catch(error => {
-                console.error(error);
+                //console.error(error);
                 errorAlert.removeAttribute("hidden");
             });
 

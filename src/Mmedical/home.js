@@ -27,10 +27,10 @@ function getEquipos() {
   })
     .then(response => response.json())
     .then(data => {
-      const tablaEquipos = document.getElementById('tablaEquipos');
-      tablaEquipos.innerHTML = '';
+      const cuerpoTabla = document.getElementById('cuerpoTabla');
+      cuerpoTabla.innerHTML = '';
       data.forEach(equipo => {
-        const row = tablaEquipos.insertRow();
+        const row = cuerpoTabla.insertRow();
         row.innerHTML = `
           <td>${equipo.marca}</td>
           <td>${equipo.modelo}</td>
@@ -42,17 +42,27 @@ function getEquipos() {
           <td></td>
         `;
         const buttonCell = row.cells[7];
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'btn btn-primary';
-        button.textContent = 'Ver';
-        button.addEventListener('click', () => verEquipo(equipo));
-        buttonCell.appendChild(button);
+
+        // Botón para ver detalles del equipo
+        const buttonDetails = document.createElement('button');
+        buttonDetails.type = 'button';
+        buttonDetails.className = 'btn btn-primary';
+        buttonDetails.textContent = 'Detalles Equipo';
+        buttonDetails.addEventListener('click', () => verEquipo(equipo));
+        buttonCell.appendChild(buttonDetails);
+
+        // Botón para ver detalles de facturación
+        const buttonBilling = document.createElement('button');
+        buttonBilling.type = 'button';
+        buttonBilling.className = 'btn btn-success';
+        buttonBilling.textContent = 'Detalles Facturación';
+        buttonBilling.style.marginLeft = '1%';
+        buttonBilling.addEventListener('click', () => verFacturacion(equipo));
+        buttonCell.appendChild(buttonBilling);
       });
     })
     .catch(error => console.error(error));
 }
-
 
 //Función para formatear fechas
 function formatDate(dateString) {
@@ -86,25 +96,73 @@ function verEquipo(equipo) {
   document.getElementById('personaContacto-view').innerHTML = equipoData.personaContacto
   document.getElementById('fono-view').innerHTML = equipoData.fono
   document.getElementById('email-view').innerHTML = equipoData.email
+
+  const btnEliminar = document.getElementById('btnEliminar');
+  btnEliminar.onclick = (event) => eliminarEquipo(event, equipo.id);
+
+  document.getElementById('btnImprimir').addEventListener('click', function () {
+    var modalContent = viewModal.innerHTML;
+    var printWindow = window.open('', '', 'height=800,width=1100');
+    printWindow.document.write('<html><head><title>Detalles del Equipo</title></head><body>');
+    printWindow.document.write(modalContent);
+    printWindow.document.write('</body></html>');
+    printWindow.print();
+    printWindow.close();
+  });
 }
 
+//Función para ver detalles de la facturación
+function verFacturacion(equipo) {
+  var viewModal = document.getElementById('viewModalFact');
+  var modal = new bootstrap.Modal(viewModal);
+  modal.show();
+
+  var equipoData = getEquipoData(equipo);
+  document.getElementById('id-view').innerHTML = equipoData.id
+  document.getElementById('marca-view').innerHTML = equipoData.marca
+  document.getElementById('modelo-view').innerHTML = equipoData.modelo
+  document.getElementById('fIngreso-view').innerHTML = equipoData.fIngreso
+  document.getElementById('fEntrega-view').innerHTML = equipoData.fEntrega
+  document.getElementById('fMantencion-view').innerHTML = equipoData.fMantencion
+  document.getElementById('detalle-view').innerHTML = equipoData.detalle
+  document.getElementById('otroDetalle-view').innerHTML = equipoData.otroDetalle
+  document.getElementById('accesorios-view').innerHTML = equipoData.accesorios
+  document.getElementById('estado-view').innerHTML = equipoData.estado
+  document.getElementById('razonSocial-view').innerHTML = equipoData.razonSocial
+  document.getElementById('centroMedico-view').innerHTML = equipoData.centroMedico
+  document.getElementById('personaContacto-view').innerHTML = equipoData.personaContacto
+  document.getElementById('fono-view').innerHTML = equipoData.fono
+  document.getElementById('email-view').innerHTML = equipoData.email
+
+  document.getElementById('btnImprimir').addEventListener('click', function () {
+    var modalContent = viewModal.innerHTML;
+    var printWindow = window.open('', '', 'height=800,width=1100');
+    printWindow.document.write('<html><head><title>Detalles del Equipo</title></head><body>');
+    printWindow.document.write(modalContent);
+    printWindow.document.write('</body></html>');
+    printWindow.print();
+    printWindow.close();
+  });
+}
+
+//Funcipon que trae los datos para verlos en Detalles
 function getEquipoData(equipo) {
-  var equipoData = {
-    id: 'ID: ' + equipo.id,
-    marca: 'Marca: ' + equipo.marca,
-    modelo: 'Modelo: ' + equipo.modelo,
-    fIngreso: 'Fecha Ingreso: ' + formatDate(equipo.fechaIngreso),
-    fEntrega: 'Fecha Entrega: ' + formatDate(equipo.fechaEntrega),
-    fMantencion: 'Fecha Mantencion: ' + formatDate(equipo.fechaMantencion),
-    detalle: 'Detalle: ' + equipo.detalle,
-    otroDetalle: 'Otro: ' + equipo.otroDetalle,
-    accesorios: 'Accesorios: ' + equipo.accesorios,
-    estado: 'Estado: ' + equipo.estado,
-    razonSocial: 'Razón Social: ' + equipo.razonSocial,
-    centroMedico: 'Centro Medico: ' + equipo.centroMedico,
-    personaContacto: 'Persona Contacto: ' + equipo.personaContacto,
-    fono: 'Fono: ' + equipo.fono,
-    email: 'Email: ' + equipo.email
+  const equipoData = {
+    id: '<b>ID: </b>' + equipo.id,
+    marca: '<b>Marca: </b>' + equipo.marca,
+    modelo: '<b>Modelo: </b>' + equipo.modelo,
+    fIngreso: '<b>Fecha Ingreso: </b>' + formatDate(equipo.fechaIngreso),
+    fEntrega: '<b>Fecha Entrega: </b>' + formatDate(equipo.fechaEntrega),
+    fMantencion: '<b>Fecha Mantencion: </b>' + formatDate(equipo.fechaMantencion),
+    detalle: '<b>Detalle: </b>' + equipo.detalle,
+    otroDetalle: '<b>Otro: </b>' + equipo.otroDetalle,
+    accesorios: '<b>Accesorios: </b>' + equipo.accesorios,
+    estado: '<b>Estado: </b>' + equipo.estado,
+    razonSocial: '<b>Razón Social: </b>' + equipo.razonSocial,
+    centroMedico: '<b>Centro Medico: </b>' + equipo.centroMedico,
+    personaContacto: '<b>Persona Contacto: </b>' + equipo.personaContacto,
+    fono: '<b>Fono: </b>' + equipo.fono,
+    email: '<b>Email: </b>' + equipo.email
   };
   return equipoData;
 }
@@ -142,8 +200,29 @@ function agregarEquipo(event) {
   })
     .then(response => response.json())
     .then(() => {
-      console.log('Se ha agregado un nuevo equipo: ')
       getEquipos()
     })
     .catch(error => console.error('Error al agregar equipo:', error));
+}
+
+//Eliminar equipo
+function eliminarEquipo(event, equipoId) {
+  event.preventDefault();
+
+  const confirmacion = confirm("¿Estás seguro de que deseas eliminar este equipo?");
+  if (!confirmacion) return;
+
+  fetch(`https://mmedical-api-d691032dcc94.herokuapp.com/api/v1/equipos/${equipoId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Error al eliminar el equipo');
+      }
+      getEquipos(); // Volver a cargar la lista de equipos
+    })
+    .catch(error => console.error('Error al eliminar equipo:', error));
 }
