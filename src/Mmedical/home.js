@@ -170,6 +170,16 @@ function getEquipoData(equipo) {
 //Agrega equipos
 function agregarEquipo(event) {
   event.preventDefault()
+
+  const estadoMap = {
+    'revision': 'Revisión',
+    'cotizado': 'Cotizado',
+    'ocRecibida': 'OC Recibida',
+    'despachado': 'Despachado',
+    'facturado': 'Facturado',
+    'garantia': 'Garantía'
+  };
+
   const formFields =
   {
 
@@ -182,7 +192,7 @@ function agregarEquipo(event) {
     detalle: detalle.value,
     otroDetalle: otroDetalle.value,
     accesorios: accesorios.value,
-    estado: estado.value,
+    estado: estadoMap[estado.value] || estado.value,
     razonSocial: razonSocial.value,
     centroMedico: centroMedico.value,
     personaContacto: personaContacto.value,
